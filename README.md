@@ -3,6 +3,8 @@
 Runs [SpecAR](https://github.com/statite-ai/SpecAR) text-to-video on Krea Realtime 14B in ComfyUI. It adds one node,
 **SpecAR Generate**, and calls the installed `specar` package.
 
+Project page: [statite.ai/specar](https://statite.ai/specar) · Paper: [PDF](https://statite.ai/specar/specar.pdf) · Code: [statite-ai/SpecAR](https://github.com/statite-ai/SpecAR)
+
 ## Install
 
 ```bash
@@ -64,6 +66,18 @@ the reference hashes apply only to FlashAttention 3 on Hopper GPUs.
 With FlashAttention 3 on an H100, the latents and 8-bit frames from this node matched `specar generate` bit for bit, and
 the latents matched the `specar-benchmark` reference hashes, with offload on or off. Save Video uses its own encoder, so
 the mp4 file differs from the one `specar generate` writes, and encoding adds about 30 s at 426 frames.
+
+## Citation
+
+```bibtex
+@misc{hassan2026specar,
+  title  = {SpecAR: Distributed Target Blocks for Fast Autoregressive Video Generation},
+  author = {Hassan, Hudeifa},
+  year   = {2026},
+  note   = {Preprint},
+  url    = {https://statite.ai/specar}
+}
+```
 
 ## License
 
