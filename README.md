@@ -18,7 +18,7 @@ python main.py
 
 ## Use
 
-1. Open http://127.0.0.1:8188.
+1. Open http://127.0.0.1:8188. If ComfyUI runs on a remote GPU machine, first run `ssh -L 8188:127.0.0.1:8188 user@your-gpu-machine` on your own computer.
 2. Go to **Templates**, find **ComfyUI-SpecAR** and open **SpecAR**. You can also drag `example_workflows/SpecAR.json` onto the page.
 3. Type your prompt in **SpecAR Generate**.
 
