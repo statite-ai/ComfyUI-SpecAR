@@ -18,7 +18,18 @@ python main.py
 
 ## Use
 
-Connect **SpecAR Generate** to **Create Video**, using both `images` and `fps`, and then to **Save Video**.
+1. Open http://127.0.0.1:8188.
+2. Go to **Templates**, find **ComfyUI-SpecAR** and open **SpecAR**. You can also drag `example_workflows/SpecAR.json` onto the page.
+3. Type your prompt in **SpecAR Generate**.
+
+![The SpecAR workflow in ComfyUI](assets/comfyui-workflow.png)
+
+4. Click **Run**. The first run loads the models, which takes about 3 minutes. Later runs start right away.
+5. The video plays in **Save Video** and is saved in `output/video`.
+
+![A finished SpecAR video in ComfyUI](assets/comfyui-result.png)
+
+### Settings
 
 | Input | Meaning |
 |---|---|
