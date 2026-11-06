@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-specar"
+version = "0.1.0"
+description = "SpecAR text-to-video in ComfyUI, on Krea Realtime 14B"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+# Empty on purpose: specar pins exact versions, so the README installs them with ComfyUI.
+dependencies = []
+
+[project.urls]
+Homepage = "https://statite.ai/specar"
+
+[tool.comfy]
+DisplayName = "SpecAR"
