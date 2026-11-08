@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-specar"
-version = "0.1.0"
+version = "0.1.1"
 description = "SpecAR: Training-free 2.04x-2.81x speedup on Krea Realtime 14B + Self-Forcing 1.3B (up to 23.1 FPS real-time on B200, 2.67x on H100) with lazy target KV caching and low-VRAM offload."
 readme = "README.md"
 requires-python = ">=3.10"
