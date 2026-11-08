@@ -39,7 +39,7 @@ python main.py
 | `k (quality)` | How much of the video the large target model generates; the small drafter generates the rest. Higher is slower, and 2 is the fastest setting |
 | `seconds` | Video length, rounded to the nearest 0.75 s. 26.6 s (426 frames) is the tested length |
 | `seed` | Random seed. Set it to fixed to reproduce a video |
-| `weights` | Weights folder; empty means `models/specar/krea`. You can change it without restarting ComfyUI |
+| `weights` | A folder under `models/specar` (default `krea`). Symlinked folders are not listed; to keep weights on another disk, add a `specar` path in `extra_model_paths.yaml`. Refresh the page to see a new folder |
 | `keep_loaded` | Keep the models loaded for the next run. Changing the prompt then takes under a second |
 | `low_vram_offload` | Keep only the active model on the GPU. On by default on GPUs under 75 GiB |
 

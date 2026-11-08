@@ -4,6 +4,7 @@ import gc
 import importlib.util
 import logging
 import os
+import stat
 import sys
 import time
 
@@ -187,6 +188,45 @@ def _generate(model, prompt, anchors, blocks, seed, tick):
     return (torch.cat(frames, dim=1)[0].permute(0, 2, 3, 1) * 255).to(torch.uint8), session.all_latents
 
 
+WEIGHTS_ROOT = os.path.join(folder_paths.models_dir, "specar")
+folder_paths.add_model_folder_path("specar", WEIGHTS_ROOT, is_default=True)
+
+
+def _plain_dir(entry):
+    # Symlinks and Windows junctions are skipped: they could lead outside models/specar, even to a network share.
+    if entry.is_symlink() or not entry.is_dir(follow_symlinks=False):
+        return False
+    return not getattr(entry.stat(follow_symlinks=False), "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT
+
+
+def _weights_dirs():
+    """Weights folders by name, from every models/specar path (including extra_model_paths.yaml); the first path wins."""
+    dirs = {}
+    for root in folder_paths.get_folder_paths("specar"):
+        if os.path.isdir(root):
+            with os.scandir(root) as entries:
+                for entry in entries:
+                    if _plain_dir(entry):
+                        dirs.setdefault(entry.name, entry.path)
+    return dirs
+
+
+def _weights_choices():
+    # krea is always listed so a missing download gets a clear error.
+    return ["krea"] + sorted(set(_weights_dirs()) - {"krea"})
+
+
+def _weights_path(name):
+    # Only a folder found by _weights_dirs reaches the loader, so a typed path or network share never does.
+    path = _weights_dirs().get(name)
+    if path is None:
+        if name != "krea":
+            raise ValueError(f"Unknown SpecAR weights {name!r}; pick a folder under models/specar")
+        path = os.path.join(WEIGHTS_ROOT, "krea")
+        raise FileNotFoundError(f"No weights in {path}. Run: specar download --backbone krea --weights {path}")
+    return path
+
+
 class SpecARGenerate:
     CATEGORY = "SpecAR"
     FUNCTION = "generate"
@@ -201,7 +241,7 @@ class SpecARGenerate:
             "k": ("INT", {"default": 7, "min": 1, "max": 999, "display_name": "k (quality)", "tooltip": "How much of the video the large model generates. Higher is slower; 2 is the fastest setting."}),
             "seconds": ("FLOAT", {"default": 26.6, "min": 0.5, "max": 600.0, "step": 0.1, "tooltip": "Video length, rounded to the nearest 0.75 s. 26.6 is the tested length."}),
             "seed": ("INT", {"default": 42, "min": 0, "max": 0xffffffffffffffff}),
-            "weights": ("STRING", {"default": "", "tooltip": "Empty means models/specar/krea."}),
+            "weights": (_weights_choices(), {"default": "krea", "tooltip": "A folder under models/specar."}),
             "keep_loaded": ("BOOLEAN", {"default": True, "tooltip": "Keep the models loaded for the next run."}),
             "low_vram_offload": ("BOOLEAN", {"default": small_gpu, "tooltip": "Keep only the active model on the GPU."}),
         }}
@@ -214,9 +254,7 @@ class SpecARGenerate:
         blocks = blocks_for_seconds("krea", seconds)
         k = min(k, blocks)  # a short video has fewer blocks than k
         anchors = uniform_k(k, blocks)
-        weights = os.path.abspath(weights or os.path.join(folder_paths.models_dir, "specar", "krea"))
-        if not os.path.isdir(weights):
-            raise FileNotFoundError(f"No weights in {weights}. Run: specar download --backbone krea --weights {weights}")
+        weights = _weights_path(weights)
 
         mm.unload_all_models()
         torch.cuda.empty_cache()
